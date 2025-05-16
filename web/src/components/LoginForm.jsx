@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -21,7 +25,6 @@ const LoginForm = () => {
     setError("");
 
     try {
-      console.log("Attempting login with:", formData);
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/auth/login`,
         {
@@ -34,16 +37,17 @@ const LoginForm = () => {
       );
 
       const data = await response.json();
-      console.log("Login response:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Login failed");
       }
 
-      // Store token and user data
+      // Save token and user to localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-      console.log("Stored user data:", data.user);
+
+      // Update user in context (so App.jsx knows immediately)
+      setUser(data.user);
 
       // Redirect based on role
       if (data.user.role === "admin") {
@@ -52,7 +56,6 @@ const LoginForm = () => {
         navigate("/agent/dashboard");
       }
     } catch (err) {
-      console.error("Login error:", err);
       setError(err.message);
     }
   };

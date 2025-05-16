@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Navigate,
   Route,
@@ -9,20 +8,17 @@ import AgentDashboard from "./components/AgentDashboard";
 import AgentManagement from "./components/AgentManagement";
 import ListManagement from "./components/ListManagement";
 import LoginForm from "./components/LoginForm";
+import { useAuth } from "./contexts/AuthContext";
 
 const PrivateRoute = ({ children, role }) => {
   const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-  console.log("PrivateRoute Debug:", { token, user, role });
+  const { user } = useAuth();
 
   if (!token) {
-    console.log("No token found, redirecting to login");
     return <Navigate to="/login" />;
   }
 
-  if (role && user.role !== role) {
-    console.log("Role mismatch, redirecting to appropriate dashboard");
+  if (role && user?.role !== role) {
     return (
       <Navigate
         to={user.role === "admin" ? "/admin/dashboard" : "/agent/dashboard"}
@@ -34,23 +30,13 @@ const PrivateRoute = ({ children, role }) => {
 };
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    console.log("App useEffect - storedUser:", storedUser);
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
+  const { user, setUser } = useAuth();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
   };
-
-  console.log("App render - current user state:", user);
 
   return (
     <Router>
