@@ -17,6 +17,22 @@ A MERN stack application for managing agents and distributing lists.
 
 ## Setup Instructions
 
+### Admin user creation 
+
+
+1. Run the admin creation script:
+   ```bash
+   node server/scripts/createAdmin.js
+   ```
+
+2. The script will create an admin user with the following default credentials:
+   - Email: admin@example.com 
+   - Password: admin123
+
+   Note: If an admin user already exists, the script will exit without making changes.
+
+
+
 ### Backend Setup
 
 1. Navigate to the server directory:
@@ -64,10 +80,6 @@ A MERN stack application for managing agents and distributing lists.
    npm run dev
    ```
 
-## Default Admin Credentials
-
-- Email: admin@example.com
-- Password: admin123
 
 ## API Endpoints
 
@@ -86,6 +98,7 @@ A MERN stack application for managing agents and distributing lists.
 - GET /api/lists/my-lists - Get lists for logged-in agent
 - GET /api/lists - Get all lists (admin only)
 - PATCH /api/lists/:id/status - Update list status
+- PUT /api/lists/:id - Update list details (admin only)
 
 ## File Upload Format
 
